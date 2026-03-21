@@ -3,7 +3,7 @@
  */
 
 import { QueryRequest, QueryResponse } from '../../shared/types.js';
-import { getNodeDetails } from './client.js';
+import { getNodeDetails, getGraphVisualization } from './client.js';
 import { getMarkdownNode } from '../llm/markdown.js';
 
 /**
@@ -107,13 +107,24 @@ async function genericQuery(query: string): Promise<string> {
     `• Total nodes: ${stats.totalNodes}\n` +
     `• Directories: ${stats.directories}\n` +
     `• Files: ${stats.files}\n\n` +
-    `I can help you find specific files, understand the project structure, or locate related content. Try asking about "modules", "files", or specific keywords like "trading" or "api".`;
+    `I can help you find specific files, understand project structure, or locate related content. Try asking about "modules", "files", or specific keywords like "trading" or "api".`;
 }
 
 /**
  * Find nodes by type
  */
 async function findNodesByType(type: string): Promise<any[]> {
+  const USE_MOCK_DB = process.env.USE_MOCK_DB === 'true';
+
+  if (USE_MOCK_DB) {
+    // Use mock database
+    const graphData = await getGraphVisualization();
+    return graphData.nodes
+      .filter((node) => node.type === type)
+      .map((node) => node.properties);
+  }
+
+  // Use Neo4j
   const { getDriver } = await import('./client.js');
   const driver = getDriver();
 
@@ -139,6 +150,13 @@ async function findNodesByType(type: string): Promise<any[]> {
  * Find all nodes
  */
 async function findAllNodes(): Promise<any[]> {
+  const USE_MOCK_DB = process.env.USE_MOCK_DB === 'true';
+
+  if (USE_MOCK_DB) {
+    const graphData = await getGraphVisualization();
+    return graphData.nodes.map((node) => node.properties);
+  }
+
   const { getDriver } = await import('./client.js');
   const driver = getDriver();
 
