@@ -114,8 +114,8 @@ async function genericQuery(query: string): Promise<string> {
  * Find nodes by type
  */
 async function findNodesByType(type: string): Promise<any[]> {
-  // Import here to avoid circular dependency
-  const { driver } = await import('./client.js');
+  const { getDriver } = await import('./client.js');
+  const driver = getDriver();
 
   if (!driver) {
     return [];
@@ -129,7 +129,7 @@ async function findNodesByType(type: string): Promise<any[]> {
       { type }
     );
 
-    return result.records.map((record) => record.get('n').properties);
+    return result.records.map((record: any) => record.get('n').properties);
   } finally {
     await session.close();
   }
@@ -139,8 +139,8 @@ async function findNodesByType(type: string): Promise<any[]> {
  * Find all nodes
  */
 async function findAllNodes(): Promise<any[]> {
-  // Import here to avoid circular dependency
-  const { driver } = await import('./client.js');
+  const { getDriver } = await import('./client.js');
+  const driver = getDriver();
 
   if (!driver) {
     return [];
@@ -151,7 +151,7 @@ async function findAllNodes(): Promise<any[]> {
   try {
     const result = await session.run('MATCH (n:FileNode) RETURN n');
 
-    return result.records.map((record) => record.get('n').properties);
+    return result.records.map((record: any) => record.get('n').properties);
   } finally {
     await session.close();
   }

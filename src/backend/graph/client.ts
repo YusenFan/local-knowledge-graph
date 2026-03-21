@@ -1,12 +1,12 @@
 /**
- * Graph database client using Memgraph (Neo4j-compatible)
+ * Graph database client using Neo4j driver (Memgraph-compatible)
  */
 
-import { Client as Neo4jClient } from 'memgraph-driver';
-import { FileNode, GraphNode, GraphEdge, GraphViewData, GraphViewNode, GraphViewEdge } from '../../shared/types.js';
+import neo4j, { Driver, Session, Integer } from 'neo4j-driver';
+import { FileNode, GraphViewData, GraphViewNode, GraphViewEdge } from '../../shared/types.js';
 
 // Graph database connection
-let driver: Neo4jClient | null = null;
+let driver: Driver | null = null;
 
 /**
  * Initialize graph database connection
@@ -21,16 +21,13 @@ export async function initGraphDB(): Promise<void> {
   const password = process.env.GRAPH_DB_PASSWORD || '';
 
   try {
-    driver = new Neo4jClient(uri, {
-      username,
-      password,
-    });
+    driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
 
     // Test connection
     const session = driver.session();
     try {
       await session.run('RETURN 1 as test');
-      console.log('✓ Connected to Memgraph database');
+      console.log('✓ Connected to graph database');
     } finally {
       await session.close();
     }
@@ -38,6 +35,13 @@ export async function initGraphDB(): Promise<void> {
     console.error('Failed to connect to graph database:', error);
     throw error;
   }
+}
+
+/**
+ * Get the graph database driver
+ */
+export function getDriver(): Driver | null {
+  return driver;
 }
 
 /**
@@ -83,7 +87,7 @@ export async function createNodes(nodes: FileNode[]): Promise<void> {
         SET n:File WHERE node.type = 'file'
       `;
 
-      await session.run(query, { nodes: batch.map(n => ({
+      await session.run(query, { nodes: batch.map((n) => ({
         ...n,
         createdAt: n.createdAt.toISOString(),
         modifiedAt: n.modifiedAt.toISOString(),
@@ -150,7 +154,7 @@ export async function getGraphVisualization(limit?: number): Promise<GraphViewDa
     }
 
     const nodesResult = await session.run(nodesQuery);
-    const nodes: GraphViewNode[] = nodesResult.records.map((record) => ({
+    const nodes: GraphViewNode[] = nodesResult.records.map((record: any) => ({
       id: record.get('id'),
       label: record.get('label'),
       type: record.get('type'),
@@ -169,7 +173,7 @@ export async function getGraphVisualization(limit?: number): Promise<GraphViewDa
     }
 
     const edgesResult = await session.run(edgesQuery);
-    const edges: GraphViewEdge[] = edgesResult.records.map((record) => ({
+    const edges: GraphViewEdge[] = edgesResult.records.map((record: any) => ({
       id: record.get('id').toString(),
       source: record.get('source'),
       target: record.get('target'),

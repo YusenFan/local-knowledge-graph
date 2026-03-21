@@ -69,48 +69,48 @@ export default async function scanRoutes(fastify: FastifyInstance) {
           },
         },
       },
-    },
-    async (request, reply) => {
-      try {
-        const { path: targetPath, options = {} } = request.body;
+      handler: async (request, reply) => {
+        try {
+          const { path: targetPath, options = {} } = request.body;
 
-        // Validate path
-        if (!targetPath || targetPath.trim() === '') {
-          return reply.status(400).send({
+          // Validate path
+          if (!targetPath || targetPath.trim() === '') {
+            return reply.status(400).send({
+              success: false,
+              error: 'Path is required',
+            });
+          }
+
+          // Import scanner dynamically to avoid initialization issues
+          const { scanDirectory } = await import('../scanner/index.js');
+
+          // Scan the directory
+          const result = await scanDirectory(targetPath, options);
+
+          // Import graph builder
+          const { buildGraphFromScan } = await import('../graph/builder.js');
+
+          // Build graph from scan result
+          await buildGraphFromScan(result.nodes);
+
+          // Import Markdown generator
+          const { generateMarkdownNodes } = await import('../llm/markdown.js');
+
+          // Generate Markdown summaries for nodes
+          await generateMarkdownNodes(result.nodes);
+
+          return reply.send({
+            success: true,
+            result,
+          });
+        } catch (error) {
+          fastify.log.error(error);
+          return reply.status(500).send({
             success: false,
-            error: 'Path is required',
+            error: error instanceof Error ? error.message : 'Unknown error',
           });
         }
-
-        // Import scanner dynamically to avoid initialization issues
-        const { scanDirectory } = await import('../scanner/index.js');
-
-        // Scan the directory
-        const result = await scanDirectory(targetPath, options);
-
-        // Import graph builder
-        const { buildGraphFromScan } = await import('../graph/builder.js');
-
-        // Build graph from scan result
-        await buildGraphFromScan(result.nodes);
-
-        // Import Markdown generator
-        const { generateMarkdownNodes } = await import('../llm/markdown.js');
-
-        // Generate Markdown summaries for nodes
-        await generateMarkdownNodes(result.nodes);
-
-        return reply.send({
-          success: true,
-          result,
-        });
-      } catch (error) {
-        fastify.log.error(error);
-        return reply.status(500).send({
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-      }
+      },
     }
   );
 
@@ -133,7 +133,7 @@ export default async function scanRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => {
+    handler: async (request, reply) => {
       // TODO: Implement scan status tracking
       return reply.send({
         hasScanned: false,
@@ -141,6 +141,6 @@ export default async function scanRoutes(fastify: FastifyInstance) {
         lastScanTime: null,
         totalNodes: 0,
       });
-    }
-  );
+    },
+  });
 }

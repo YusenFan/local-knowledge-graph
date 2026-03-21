@@ -34,23 +34,23 @@ export default async function queryRoutes(fastify: FastifyInstance) {
           },
         },
       },
-    },
-    async (request, reply) => {
-      try {
-        const { query, includeContent = false } = request.body;
+      handler: async (request, reply) => {
+        try {
+          const { query, includeContent = false } = request.body;
 
-        // Import query engine
-        const { queryGraph } = await import('../graph/query.js');
+          // Import query engine
+          const { queryGraph } = await import('../graph/query.js');
 
-        const result: QueryResponse = await queryGraph(query, includeContent);
+          const result: QueryResponse = await queryGraph(query, includeContent);
 
-        return reply.send(result);
-      } catch (error) {
-        fastify.log.error(error);
-        return reply.status(500).send({
-          error: error instanceof Error ? error.message : 'Unknown error',
-        });
-      }
+          return reply.send(result);
+        } catch (error) {
+          fastify.log.error(error);
+          return reply.status(500).send({
+            error: error instanceof Error ? error.message : 'Unknown error',
+          });
+        }
+      },
     }
   );
 
@@ -73,7 +73,7 @@ export default async function queryRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    async (request, reply) => {
+    handler: async (request, reply) => {
       // TODO: Implement query suggestions
       return reply.send({
         suggestions: [
@@ -83,6 +83,6 @@ export default async function queryRoutes(fastify: FastifyInstance) {
           'What are the main directories?',
         ],
       });
-    }
-  );
+    },
+  });
 }

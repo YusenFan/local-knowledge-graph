@@ -3,7 +3,7 @@
  */
 
 import { FileNode } from '../../shared/types.js';
-import { initGraphDB, createNodes, createEdges } from './client.js';
+import { initGraphDB, createNodes, createEdges, getDriver } from './client.js';
 
 /**
  * Build the graph from file system scan results
@@ -32,12 +32,9 @@ export async function buildGraphFromScan(nodes: FileNode[]): Promise<void> {
  * Clear all data from the graph
  */
 export async function clearGraph(): Promise<void> {
-  const { initGraphDB } = await import('./client.js');
-
   await initGraphDB();
 
-  // Import here to avoid circular dependency
-  const { driver } = await import('./client.js');
+  const driver = getDriver();
 
   if (!driver) {
     throw new Error('Graph database not initialized');

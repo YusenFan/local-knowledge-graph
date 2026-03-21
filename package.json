@@ -2,14 +2,14 @@
   "name": "local-knowledge-graph",
   "version": "0.1.0",
   "description": "A graph-first local knowledge system with LLM-powered structural understanding",
-  "main": "dist/backend/index.js",
+  "main": "dist/src/backend/index.js",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "tsc && node dist/backend/index.js",
+    "dev:backend": "tsc && node dist/src/backend/index.js",
     "dev:frontend": "cd frontend && npm run dev",
     "build": "tsc && cd frontend && npm run build",
-    "backend": "node dist/backend/index.js",
+    "backend": "node dist/src/backend/index.js",
     "frontend": "cd frontend && npm run start",
     "test": "jest",
     "lint": "eslint . --ext .ts"
@@ -29,7 +29,7 @@
     "@fastify/swagger": "^9.0.0",
     "@fastify/swagger-ui": "^4.0.0",
     "fastify": "^5.2.0",
-    "memgraph-driver": "^1.7.0",
+    "neo4j-driver": "^5.26.0",
     "dotenv": "^16.4.7"
   },
   "devDependencies": {
