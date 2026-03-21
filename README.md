@@ -150,7 +150,9 @@ trading, api, backend, core
 
 ## Usage
 
-### Setup
+> 📖 **For detailed setup instructions, see [SETUP.md](SETUP.md)**
+
+### Quick Start
 
 ```bash
 # Clone repo
@@ -160,30 +162,36 @@ cd local-knowledge-graph
 # Install dependencies
 npm install
 
-# Start Memgraph (Docker)
-docker run -d -p 7687:7687 -p 7444:7444 memgraph/memgraph-platform
+# Set up environment
+cp .env.example .env
+# Edit .env with your graph database credentials
 
-# Start backend
-npm run backend
+# Start Neo4j or Memgraph (see SETUP.md for options)
+# Then start the backend
+npm run dev:backend
+```
 
-# Start frontend
-npm run frontend
+### Quick Test (No Database Required)
+
+```bash
+# Test the scanner module
+node test-scanner.js
 ```
 
 ### Workflow
 
-1. **Select Directory**: Choose a directory to analyze
+1. **Select Directory**: Choose a directory to analyze via API
 2. **Scan**: System scans structure and builds graph
-3. **Explore**: Interactive graph view
+3. **Explore**: Interactive graph view (via API endpoints)
 4. **Query**: Ask questions about your project structure
-5. **Deep Dive**: Click nodes to load content when needed
+5. **Deep Dive**: Load file content on-demand
 
 ### Example Queries
 
-- "What modules are in my trading system project?"
-- "Which subdirectory looks like research work vs product prototype?"
-- "Where should I start if I want to find trading-related files?"
-- "Show me all TypeScript files in the API layer"
+- "What modules are in my project?"
+- "Which files are related to trading?"
+- "Show me all TypeScript files"
+- "What are the main directories?"
 
 ## Roadmap
 
