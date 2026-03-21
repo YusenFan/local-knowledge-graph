@@ -152,7 +152,8 @@ export async function createNodes(nodes: FileNode[]): Promise<void> {
       const query = `
         UNWIND $nodes AS node
         MERGE (n:FileNode {id: node.id})
-        SET n += {
+        ON CREATE SET n = {
+          id: node.id,
           path: node.path,
           name: node.name,
           type: node.type,
@@ -162,8 +163,13 @@ export async function createNodes(nodes: FileNode[]): Promise<void> {
           createdAt: datetime(node.createdAt),
           modifiedAt: datetime(node.modifiedAt)
         }
-        SET n:Directory WHERE node.type = 'directory'
-        SET n:File WHERE node.type = 'file'
+        WITH n, node
+        FOREACH (_ IN CASE WHEN node.type = 'directory' THEN [1] ELSE [] END |
+          SET n:Directory
+        )
+        FOREACH (_ IN CASE WHEN node.type = 'file' THEN [1] ELSE [] END |
+          SET n:File
+        )
       `;
 
       await session.run(query, { nodes: batch.map((n) => ({
