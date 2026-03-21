@@ -30,33 +30,29 @@ This will install all required packages including:
 
 ### 3. Set Up Graph Database
 
+> 📖 **For detailed Neo4j setup guide, see [NEO4J_SETUP.md](NEO4J_SETUP.md)**
+
 #### Option A: Neo4j Community Edition (Recommended)
 
-**Download and Install:**
+**Quick Install (Debian/Ubuntu):**
 
 ```bash
-# Linux
-wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
-echo 'deb https://debian.neo4j.com stable latest' | sudo tee /etc/apt/sources.list.d/neo4j.list
+# Add repository
+wget -O - https://debian.neo4j.com/neotechnology.gpg.key 2>/dev/null | sudo gpg --dearmor -o /usr/share/keyrings/neo4j-archive-keyring.gpg
+echo 'deb [signed-by=/usr/share/keyrings/neo4j-archive-keyring.gpg] https://debian.neo4j.com stable latest' | sudo tee /etc/apt/sources.list.d/neo4j.list
+
+# Install
 sudo apt update
-sudo apt install neo4j
+sudo apt install -y neo4j
 
-# Or download from: https://neo4j.com/download/
-```
-
-**Start Neo4j:**
-
-```bash
+# Start
 sudo systemctl start neo4j
-# or
-sudo service neo4j start
+
+# Check status
+sudo systemctl status neo4j
 ```
 
-**Configure:**
-
-- Default URL: `bolt://localhost:7687`
-- Default UI: `http://localhost:7474`
-- First login: Set a password for user `neo4j`
+**Access Neo4j Browser:** http://localhost:7474
 
 #### Option B: Memgraph (Docker)
 
