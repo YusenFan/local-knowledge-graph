@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Markdown nodes (generated)
+markdown-nodes/
+
+# Database
+data/
+*.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.next/
+frontend/build/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+.cache/
+.temp/
