@@ -30,7 +30,8 @@
     "@fastify/swagger-ui": "^5.0.0",
     "fastify": "^5.2.0",
     "neo4j-driver": "^5.26.0",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
