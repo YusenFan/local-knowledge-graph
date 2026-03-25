@@ -232,6 +232,7 @@ export async function checkConfig(): Promise<boolean> {
  */
 export async function testConnection(): Promise<boolean> {
   if (!(await checkConfig())) {
+    console.warn('Skipping connection test - Tinfoil API not configured');
     return false;
   }
 
